@@ -29,7 +29,7 @@ class ProductController
     public function getOne($sku)
     {
         header("Content-type: application/json");
-        if ($this->isInconsistentData($sku)) return;
+        if ($this->isSkuNull($sku)) return;
         $product = $this->productRepository->getOne($sku);
         if ($product) echo json_encode($product);
         else {
@@ -41,7 +41,7 @@ class ProductController
     public function delete($sku)
     {
         header("Content-type: application/json");
-        if ($this->isInconsistentData($sku)) return;
+        if ($this->isSkuNull($sku)) return;
         $status = $this->productRepository->delete($sku);
         if ($status) http_response_code(ResponseCodes::HTTP_NO_CONTENT);
         else {
@@ -98,5 +98,14 @@ class ProductController
             return true;
         }
         return false;
+    }
+
+    private function isSkuNull($sku)
+    {
+        if ($sku == null) {
+            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+            echo json_encode(["message" => "Inconsistent Data Provided"]);
+            return true;
+        }
     }
 }
