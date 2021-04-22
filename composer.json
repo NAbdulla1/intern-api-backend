@@ -1,23 +1,26 @@
 {
-    "name": "nayon/intern-api-backend",
-    "description": "This is the API backend of a simple product order system using raw PHP with OOP",
-    "type": "project",
-    "authors": [
-        {
-            "name": "Md. Abdulla Al Mamun",
-            "email": "nayonabdulla@gmail.com"
-        }
-    ],
-    "require": {
-        "monolog/monolog": "^2.2",
-        "ext-mysqli": "*"
-    },
-    "autoload": {
-        "psr-4": {
-            "Models\\":       "src/models",
-            "Repository\\":   "src/repositories",
-            "Controllers\\":  "src/controllers",
-            "Database\\":     "src/db"
-        }
+  "name": "nayon/intern-api-backend",
+  "description": "This is the API backend of a simple product order system using raw PHP with OOP",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Md. Abdulla Al Mamun",
+      "email": "nayonabdulla@gmail.com"
     }
+  ],
+  "require": {
+    "monolog/monolog": "^2.2",
+    "ext-mysqli": "*",
+    "ext-http": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Models\\": "src/models",
+      "Repository\\": "src/repositories",
+      "Controller\\": "src/controllers",
+      "Database\\": "src/db",
+      "Utils\\": "src/utils"
+    }
+  }
 }
