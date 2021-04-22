@@ -16,7 +16,7 @@ class ProductRepository
         $this->database = DB::instance();
     }
 
-    public function get(): array
+    public function get(): array //todo add filter for products, example: price range, category, pagination
     {
         $products = [];
         $query = "SELECT * FROM products";

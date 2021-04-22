@@ -34,7 +34,7 @@ class ProductController
         if ($product) echo json_encode($product);
         else {
             http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            //todo what message should be passed if there is error
+            echo json_encode(["message" => "Product Not Found"]);
         }
     }
 
@@ -46,7 +46,7 @@ class ProductController
         if ($status) http_response_code(ResponseCodes::HTTP_NO_CONTENT);
         else {
             http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            //todo what message should be passed if there is error
+            echo json_encode(["message" => "Product Not Found"]);
         }
     }
 
@@ -74,13 +74,17 @@ class ProductController
         if ($this->isInconsistentData($prodAssocArray)) return;
         if ($this->productNotExists($prodAssocArray)) return;
         if ($this->productRepository->update($prodAssocArray)) $this->getOne($prodAssocArray['sku']);
-        else http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+        else {
+            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+            echo json_encode(["message" => "Nothing to update"]);
+        }
     }
 
     private function isInconsistentData($inputData): bool
     {
         if ($inputData == null || !isset($inputData['sku']) || (isset($inputData['sku']) && count($inputData) < 2)) {
             http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+            echo json_encode(["message" => "Inconsistent Data Provided"]);
             return true;
         }
         return false;
@@ -90,6 +94,7 @@ class ProductController
     {
         if ($this->productRepository->getOne($prodAssocArray['sku']) == null) {
             http_response_code(ResponseCodes::HTTP_NOT_FOUND);
+            echo json_encode(["message" => "Product Not Found"]);
             return true;
         }
         return false;
