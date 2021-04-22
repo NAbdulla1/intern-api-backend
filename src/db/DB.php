@@ -27,5 +27,3 @@ class DB
         return self::$connection;
     }
 }
-
-DB::getConnection();
