@@ -29,32 +29,24 @@ class ProductController
     public function getOne($sku)
     {
         header("Content-type: application/json");
-        if ($sku == null) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            return;//todo what message should be passed if there is error
-        }
+        if ($this->isInconsistentData($sku)) return;
         $product = $this->productRepository->getOne($sku);
-        if ($product) {
-            echo json_encode($product);
-        } else {
+        if ($product) echo json_encode($product);
+        else {
             http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            return;//todo what message should be passed if there is error
+            //todo what message should be passed if there is error
         }
     }
 
     public function delete($sku)
     {
         header("Content-type: application/json");
-        if ($sku == null) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            return;//todo what message should be passed if there is error
-        }
+        if ($this->isInconsistentData($sku)) return;
         $status = $this->productRepository->delete($sku);
-        if ($status) {
-            http_response_code(ResponseCodes::HTTP_NO_CONTENT);
-        } else {
+        if ($status) http_response_code(ResponseCodes::HTTP_NO_CONTENT);
+        else {
             http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            return;//todo what message should be passed if there is error
+            //todo what message should be passed if there is error
         }
     }
 
@@ -74,5 +66,32 @@ class ProductController
             http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
             echo json_encode(["message" => $ex->getMessage()]);
         }
+    }
+
+    public function patch($prodAssocArray)
+    {
+        header("Content-type: application/json");
+        if ($this->isInconsistentData($prodAssocArray)) return;
+        if ($this->productNotExists($prodAssocArray)) return;
+        if ($this->productRepository->update($prodAssocArray)) $this->getOne($prodAssocArray['sku']);
+        else http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+    }
+
+    private function isInconsistentData($inputData): bool
+    {
+        if ($inputData == null || !isset($inputData['sku']) || (isset($inputData['sku']) && count($inputData) < 2)) {
+            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+            return true;
+        }
+        return false;
+    }
+
+    private function productNotExists($prodAssocArray): bool
+    {
+        if ($this->productRepository->getOne($prodAssocArray['sku']) == null) {
+            http_response_code(ResponseCodes::HTTP_NOT_FOUND);
+            return true;
+        }
+        return false;
     }
 }
