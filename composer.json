@@ -1,0 +1,22 @@
+{
+    "name": "nayon/intern-api-backend",
+    "description": "This is the API backend of a simple product order system using raw PHP with OOP",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Md. Abdulla Al Mamun",
+            "email": "nayonabdulla@gmail.com"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "^2.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Models":       "src/models",
+            "Repository":   "src/repositories",
+            "Controllers":  "src/controllers",
+            "Database":     "src/db"
+        }
+    }
+}
