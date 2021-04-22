@@ -9,14 +9,15 @@
         }
     ],
     "require": {
-        "monolog/monolog": "^2.2"
+        "monolog/monolog": "^2.2",
+        "ext-mysqli": "*"
     },
     "autoload": {
         "psr-4": {
-            "Models":       "src/models",
-            "Repository":   "src/repositories",
-            "Controllers":  "src/controllers",
-            "Database":     "src/db"
+            "Models\\":       "src/models",
+            "Repository\\":   "src/repositories",
+            "Controllers\\":  "src/controllers",
+            "Database\\":     "src/db"
         }
     }
 }
