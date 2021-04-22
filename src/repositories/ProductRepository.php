@@ -21,8 +21,10 @@ class ProductRepository
         $products = [];
         $query = "SELECT * FROM products";
         $result_set = $this->database->getConnection()->query($query);
-        while ($prod = $result_set->fetch_assoc())
+        while ($prod = $result_set->fetch_assoc()) {
+            $prod['price'] = (double)$prod['price'];
             array_push($products, $prod);
+        }
         return $products;
     }
 
@@ -31,8 +33,10 @@ class ProductRepository
         $stmt = $this->database->executePreparedStatement("SELECT * FROM products WHERE sku = ?", "s", [$sku]);
         if (!$stmt) return null;
         $result_set = $stmt->get_result();
-        if ($prod = $result_set->fetch_assoc())
+        if ($prod = $result_set->fetch_assoc()) {
+            $prod['price'] = (double)$prod['price'];
             return $prod;
+        }
         return null;
     }
 
