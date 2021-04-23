@@ -20,7 +20,6 @@ class LoginController
 
     public function login($credentialsArray)
     {
-        header("Content-Type: application/json");
         if ($this->isEmptyCredentials($credentialsArray)) return;
         $user = $this->userRepository->getOne($credentialsArray['email']);
         if (empty($user) || empty($user['email']) || empty($user['password']) || !$this->isUserVerified($user, $credentialsArray)) {

@@ -5,7 +5,6 @@ namespace Controller;
 require "../../vendor/autoload.php";
 
 use Exception;
-use InvalidArgumentException;
 use Models\Product;
 use Repository\ProductRepository;
 use Utils\ResponseCodes;
@@ -21,14 +20,12 @@ class ProductController
 
     public function getAll()
     {
-        header("Content-type: application/json");
         $productsAsAssocArray = $this->productRepository->get();
         echo json_encode(["products" => $productsAsAssocArray]);
     }
 
     public function getOne($sku)
     {
-        header("Content-type: application/json");
         if ($this->isSkuNull($sku)) return;
         $product = $this->productRepository->getOne($sku);
         if ($product) echo json_encode($product);
@@ -40,7 +37,6 @@ class ProductController
 
     public function delete($sku)
     {
-        header("Content-type: application/json");
         if ($this->isSkuNull($sku)) return;
         $status = $this->productRepository->delete($sku);
         if ($status) http_response_code(ResponseCodes::HTTP_NO_CONTENT);
@@ -52,7 +48,6 @@ class ProductController
 
     public function create($prodAssocArray)
     {
-        header("Content-type: application/json");
         try {
             $prod = Product::fromAssocArray($prodAssocArray);
             if ($this->productRepository->create($prod)) {
@@ -64,13 +59,12 @@ class ProductController
             }
         } catch (Exception $ex) {
             http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => $ex->getMessage()]);
+            echo json_encode(["message" => $prodAssocArray == null ? "No Data" : $ex->getMessage()]);
         }
     }
 
     public function patch($prodAssocArray)
     {
-        header("Content-type: application/json");
         if ($this->isInconsistentData($prodAssocArray)) return;
         if ($this->productNotExists($prodAssocArray)) return;
         if ($this->productRepository->update($prodAssocArray)) $this->getOne($prodAssocArray['sku']);

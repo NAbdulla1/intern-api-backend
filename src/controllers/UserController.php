@@ -20,7 +20,6 @@ class UserController
 
     public function create($userAssocArray)
     {
-        header("Content-type: application/json");
         try {
             $user = User::fromAssocArray($userAssocArray);
             if ($this->isUserExists($user)) return;

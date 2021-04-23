@@ -14,7 +14,7 @@ class JWTController
 {
     /**
      * @param User $user
-     * Sends the token to the user
+     * Generates a new token and sends to the user
      */
     public static function tokenResponse(User $user)
     {
@@ -39,7 +39,6 @@ class JWTController
      */
     public static function validateToken(string $token)
     {
-        header("Content-Type: application/json");
         $msg = "No Access Token Provided";
         $resp_code = ResponseCodes::HTTP_UNAUTHORIZED;
         if (!empty($token)) {
