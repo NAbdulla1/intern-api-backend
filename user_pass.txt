@@ -1,0 +1,9 @@
+user1:
+    user1@abc.com
+    123456
+    admin
+
+user2:
+    user2@abc.com
+    1234567
+    customer

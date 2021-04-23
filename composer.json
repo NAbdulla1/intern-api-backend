@@ -21,7 +21,8 @@
       "Repository\\": "src/repositories",
       "Controller\\": "src/controllers",
       "Database\\": "src/db",
-      "Utils\\": "src/utils"
+      "Utils\\": "src/utils",
+      "JSON_Web_Token\\": "src/jwt"
     }
   }
 }
