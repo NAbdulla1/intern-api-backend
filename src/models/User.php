@@ -97,4 +97,9 @@ class User
     {
         return ['name' => $this->name, 'email' => $this->email, 'role' => $this->role];
     }
+
+    public function isAdmin(): bool
+    {
+        return strcasecmp($this->role, "admin") == 0;
+    }
 }

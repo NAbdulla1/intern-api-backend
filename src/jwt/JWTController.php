@@ -35,7 +35,7 @@ class JWTController
 
     /**
      * @param $token string The JWT string received from the user
-     * @return false|user Returns False if the token is empty or expired otherwise returns an object having three field 'name', 'email', 'role'. Also sends response to client if token is invalid or expired
+     * @return false|User Returns False if the token is empty or expired otherwise returns an User which password field has a dummy field. Also sends response to client if token is invalid or expired
      */
     public static function validateToken(string $token)
     {
@@ -45,7 +45,7 @@ class JWTController
         if (!empty($token)) {
             try {
                 $data = JWT::decode($token, JWTConfig::KEY, [JWTConfig::ALG]);
-                return $data->user;
+                return new User($data->user->name, $data->user->email, "Not Necessary", $data->user->role);
             } catch (Exception $ex) {
                 $resp_code = $ex instanceof ExpiredException ? ResponseCodes::HTTP_FORBIDDEN : ResponseCodes::HTTP_UNAUTHORIZED;
                 $msg = $ex->getMessage();
