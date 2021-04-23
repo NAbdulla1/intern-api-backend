@@ -12,7 +12,8 @@
     "monolog/monolog": "^2.2",
     "ext-mysqli": "*",
     "ext-http": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "firebase/php-jwt": "^v5.2.1"
   },
   "autoload": {
     "psr-4": {
