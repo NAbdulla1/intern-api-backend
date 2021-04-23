@@ -94,12 +94,13 @@ class ProductController
         return false;
     }
 
-    private function isSkuNull($sku)
+    private function isSkuNull($sku): bool
     {
         if ($sku == null) {
             http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
             echo json_encode(["message" => "Inconsistent Data Provided"]);
             return true;
         }
+        return false;
     }
 }
