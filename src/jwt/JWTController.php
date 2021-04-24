@@ -35,7 +35,7 @@ class JWTController
 
     /**
      * @param $token string The JWT string received from the user
-     * @return false|User Returns False if the token is empty or expired otherwise returns an User which password field has a dummy field. Also sends response to client if token is invalid or expired
+     * @return false|User Returns False if the token is empty or expired otherwise returns an User which password field has a dummy value. Also sends response to client if token is invalid or expired
      */
     public static function validateToken(string $token)
     {
