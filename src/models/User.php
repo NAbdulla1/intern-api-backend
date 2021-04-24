@@ -43,6 +43,8 @@ class User
     public function setEmail(string $email): void
     {
         $this->checkStringConstraint("email", $email, 1, 100);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+            throw new InvalidArgumentException("Invalid Email Address");
         $this->email = $email;
     }
 
