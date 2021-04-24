@@ -61,6 +61,6 @@ class ImageController
     {
         $extension = pathinfo($image['name'], PATHINFO_EXTENSION);
         $name = time() . "" . rand() . ".$extension";
-        return ["/images/" . $name, __DIR__ . "/../../images/" . $name];
+        return ["http://intern.local/images/" . $name, __DIR__ . "/../../images/" . $name];
     }
 }
