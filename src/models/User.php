@@ -67,6 +67,8 @@ class User
     public function setRole(string $role): void
     {
         $this->checkStringConstraint("role", $role, 1, 10);
+        if ($role != 'admin' && $role != 'customer')
+            throw new InvalidArgumentException("Invalid Role. Role must be either 'admin' or 'customer'");
         $this->role = $role;
     }
 
