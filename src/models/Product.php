@@ -126,6 +126,8 @@ class Product
 
     public function toAssocArray(): array
     {
-        return (array)$this;
+        return ["name" => $this->getName(), "sku" => $this->getSku(),
+            "description" => $this->getDescription(), "category" => $this->getCategory(),
+            "price" => $this->getPrice(), "imageUrl" => $this->getImageUrl()];
     }
 }

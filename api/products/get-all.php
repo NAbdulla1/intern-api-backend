@@ -11,4 +11,4 @@ $access_token = isset(apache_request_headers()['access_token']) ? apache_request
 $user = JWTController::validateToken($access_token);
 if (!$user) exit();
 
-(new ProductController())->getAll();
+(new ProductController())->getAll($_GET);

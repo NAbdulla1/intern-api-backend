@@ -6,6 +6,7 @@ namespace Repository;
 
 use Database\DB;
 use Models\Product;
+use Utils\QueryBuilder;
 
 class ProductRepository
 {
@@ -16,15 +17,14 @@ class ProductRepository
         $this->database = DB::instance();
     }
 
-    public function get(): array //todo add filter for products, example: price range, category, pagination
+    public function get($parameters): array
     {
         $products = [];
-        $query = "SELECT * FROM products";
-        $result_set = $this->database->getConnection()->query($query);
-        while ($prod = $result_set->fetch_assoc()) {
-            $prod['price'] = (double)$prod['price'];
-            array_push($products, $prod);
-        }
+        [$query, $types, $bindParams] = (new QueryBuilder("products", true, $parameters))->buildQuery();
+        $stmt = $this->database->executePreparedStatement($query, $types, $bindParams);
+        if ($stmt && ($result_set = $stmt->get_result()))
+            while ($result_set && $prod = $result_set->fetch_assoc())
+                array_push($products, Product::fromAssocArray($prod)->toAssocArray());
         return $products;
     }
 
@@ -40,13 +40,13 @@ class ProductRepository
         return null;
     }
 
-    public function delete($sku)
+    public function delete($sku): bool
     {
         $stmt = $this->database->executePreparedStatement("DELETE FROM products WHERE sku = ?", "s", [$sku]);
         return $stmt->affected_rows > 0;
     }
 
-    public function create(Product $product)
+    public function create(Product $product): bool
     {
         $stmt = $this->database->executePreparedStatement("INSERT INTO products(name, sku, description, category, price, imageUrl) VALUES (?, ?, ?, ?, ?, ?)",
             "ssssds", [$product->getName(), $product->getSku(), $product->getDescription(), $product->getCategory(), $product->getPrice(), $product->getImageUrl()]);

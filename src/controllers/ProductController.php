@@ -18,9 +18,9 @@ class ProductController
         $this->productRepository = new ProductRepository();
     }
 
-    public function getAll()
+    public function getAll($parameters)
     {
-        $productsAsAssocArray = $this->productRepository->get();
+        $productsAsAssocArray = $this->productRepository->get($parameters);
         echo json_encode(["products" => $productsAsAssocArray]);
     }
 
