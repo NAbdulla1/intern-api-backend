@@ -3,7 +3,7 @@
 use Controller\LoginController;
 
 require "../../vendor/autoload.php";
-
+\Utils\CORSHeaders::setProperResponseHeadersForCors();
 header("Content-type: application/json");
 
 $credentials = json_decode(file_get_contents("php://input"), true);
