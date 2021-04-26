@@ -7,6 +7,7 @@ require "../../vendor/autoload.php";
 use Exception;
 use Models\User;
 use Repository\UserRepository;
+use Utils\OtherResponse;
 use Utils\ResponseCodes;
 
 class UserController
@@ -24,21 +25,16 @@ class UserController
             $user = User::fromAssocArray($userAssocArray);
             if ($this->isUserExists($user)) return;
             if ($this->registerUser($user)) return;
-            else {
-                http_response_code(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR);
-                echo json_encode(["message" => "Can't Process Request"]);
-            }
+            else OtherResponse::send(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR, "Can't Process Request");
         } catch (Exception $ex) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => $userAssocArray == null ? "No Data" : $ex->getMessage()]);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, $userAssocArray == null ? "No Data" : $ex->getMessage());
         }
     }
 
     private function isUserExists($user): bool
     {
         if ($this->userRepository->getOne($user->getEmail())) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(['message' => 'User already exists']);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, 'User already exists');
             return true;
         }
         return false;

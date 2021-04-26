@@ -7,6 +7,7 @@ require "../../vendor/autoload.php";
 use Exception;
 use Models\Product;
 use Repository\ProductRepository;
+use Utils\OtherResponse;
 use Utils\ResponseCodes;
 
 class ProductController
@@ -29,21 +30,16 @@ class ProductController
         if ($this->isSkuNull($sku)) return;
         $product = $this->productRepository->getOne($sku);
         if ($product) echo json_encode($product);
-        else {
-            http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            echo json_encode(["message" => "Product Not Found"]);
-        }
+        else OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Product Not Found");
     }
 
     public function delete($sku)
     {
         if ($this->isSkuNull($sku)) return;
+        if ($this->productRepository->getOne($sku) == null)OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Product Not Found");
         $status = $this->productRepository->delete($sku);
-        if ($status) http_response_code(ResponseCodes::HTTP_NO_CONTENT);
-        else {
-            http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            echo json_encode(["message" => "Product Not Found"]);
-        }
+        if ($status) OtherResponse::send(ResponseCodes::HTTP_NO_CONTENT, "successfully deleted");
+        else OtherResponse::send(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR, "Delete Failed");
     }
 
     public function create($prodAssocArray)
@@ -53,13 +49,10 @@ class ProductController
             if ($this->productRepository->create($prod)) {
                 http_response_code(ResponseCodes::HTTP_CREATED);
                 echo json_encode($prodAssocArray);
-            } else {
-                http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-                echo json_encode(["message" => "Product already exists"]);
-            }
+            } else
+                OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST,"Product already exists");
         } catch (Exception $ex) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => $prodAssocArray == null ? "No Data" : $ex->getMessage()]);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, $prodAssocArray == null ? "No Data" : $ex->getMessage());
         }
     }
 
@@ -68,17 +61,13 @@ class ProductController
         if ($this->isInconsistentData($prodAssocArray)) return;
         if ($this->productNotExists($prodAssocArray)) return;
         if ($this->productRepository->update($prodAssocArray)) $this->getOne($prodAssocArray['sku']);
-        else {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => "Nothing to update"]);
-        }
+        else OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Nothing to update");
     }
 
     private function isInconsistentData($inputData): bool
     {
         if ($inputData == null || !isset($inputData['sku']) || (isset($inputData['sku']) && count($inputData) < 2)) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => "Inconsistent Data Provided"]);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Inconsistent Data Provided");
             return true;
         }
         return false;
@@ -87,8 +76,7 @@ class ProductController
     private function productNotExists($prodAssocArray): bool
     {
         if ($this->productRepository->getOne($prodAssocArray['sku']) == null) {
-            http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            echo json_encode(["message" => "Product Not Found"]);
+            OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Product Not Found");
             return true;
         }
         return false;
@@ -97,8 +85,7 @@ class ProductController
     private function isSkuNull($sku): bool
     {
         if ($sku == null) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => "Inconsistent Data Provided"]);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Inconsistent Data Provided");
             return true;
         }
         return false;

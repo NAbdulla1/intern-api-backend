@@ -6,6 +6,7 @@ namespace Controller;
 
 use Models\User;
 use Repository\UserRepository;
+use Utils\OtherResponse;
 use Utils\ResponseCodes;
 use JSON_Web_Token\JWTController;
 
@@ -22,16 +23,14 @@ class LoginController
     {
         if ($this->isEmptyCredentials($credentialsArray)) return;
         $user = $this->userRepository->getOne($credentialsArray['email']);
-        if (empty($user) || empty($user['email']) || empty($user['password']) || !$this->isUserVerified($user, $credentialsArray)) {
-            http_response_code(ResponseCodes::HTTP_UNAUTHORIZED);
-            echo json_encode(["message" => "Incorrect email or password"]);
-        }
+        if (empty($user) || empty($user['email']) || empty($user['password']) || !$this->isUserVerified($user, $credentialsArray))
+            OtherResponse::send(ResponseCodes::HTTP_UNAUTHORIZED, "Incorrect email or password");
     }
 
     private function isEmptyCredentials($credentialsArray): bool
     {
         if (empty($credentialsArray) || empty($credentialsArray['email']) || empty($credentialsArray['password'])) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Email or password is empty");
             return true;
         }
         return false;

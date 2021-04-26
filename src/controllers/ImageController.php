@@ -3,6 +3,7 @@
 
 namespace Controller;
 
+use Utils\OtherResponse;
 use Utils\ResponseCodes;
 
 class ImageController
@@ -10,14 +11,14 @@ class ImageController
     public function delete($content)
     {
         if (empty($content) || empty($content['url']) || !filter_var($content['url'], FILTER_VALIDATE_URL)) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Invalid Url");
             return;
         }
         $path = $this->getAbsolutePath($content['url']);
         if (file_exists($path)) {
-            if (unlink($path)) http_response_code(ResponseCodes::HTTP_NO_CONTENT);
-            else http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-        } else http_response_code(ResponseCodes::HTTP_NOT_FOUND);
+            if (unlink($path)) OtherResponse::send(ResponseCodes::HTTP_NO_CONTENT, "Deleted successfully");
+            else OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "");
+        } else OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Image Not Found");
     }
 
     private function getAbsolutePath($url): string
@@ -34,16 +35,13 @@ class ImageController
         if (move_uploaded_file($image['tmp_name'], $uploadPath)) {
             http_response_code(ResponseCodes::HTTP_CREATED);
             echo json_encode(["message" => "image uploaded", "path" => $urlPath]);
-        } else {
-            http_response_code(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR);
-            echo json_encode(["message" => "image upload failed"]);
-        }
+        } else OtherResponse::send(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR, "image upload failed");
     }
 
     private function isInvalidImage($image): bool
     {
         if ($image['size'] <= 0 || !$this->isImageType($image['type']) || $image['error'] != 0) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Invalid Image");
             return true;
         }
         return false;

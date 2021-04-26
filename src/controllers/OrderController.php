@@ -8,6 +8,7 @@ use Exception;
 use Models\Order;
 use Repository\OrderRepository;
 use Repository\ProductRepository;
+use Utils\OtherResponse;
 use Utils\ResponseCodes;
 
 class OrderController
@@ -34,13 +35,9 @@ class OrderController
             if ($order = $this->orderRepository->create($order)) {
                 http_response_code(ResponseCodes::HTTP_CREATED);
                 echo json_encode($order->toAssocArray());
-            } else {
-                http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-                echo json_encode(["message" => $this->productRepository->getOne($orderAssocArray['product_sku']) == null ? "No product found" : "Can't create order"]);
-            }
+            } else OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, $this->productRepository->getOne($orderAssocArray['product_sku']) == null ? "No product found" : "Can't create order");
         } catch (Exception $ex) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => $orderAssocArray == null ? "No Data" : $ex->getMessage()]);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, $orderAssocArray == null ? "No Data" : $ex->getMessage());
         }
     }
 
@@ -48,10 +45,7 @@ class OrderController
     {
         $order = $this->orderRepository->getOne($id);
         if ($order) echo json_encode(Order::fromAssocArray($order)->toAssocArray());
-        else {
-            http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            echo json_encode(["message" => "Order Not Found"]);
-        }
+        else OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Order Not Found");
     }
 
     public function patch($content)
@@ -60,21 +54,16 @@ class OrderController
         if ($this->isOrderNotExist($content)) return;
         try {
             if ($this->orderRepository->update($content)) $this->getOne($content['id']);
-            else {
-                http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-                echo json_encode(["message" => "Nothing to update"]);
-            }
+            else OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Nothing to update");
         } catch (Exception $ex) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => $ex->getMessage()]);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, $ex->getMessage());
         }
     }
 
     private function isInconsistentData($inputData): bool
     {
         if ($inputData == null || empty($inputData['id']) || empty($inputData['status'])) {
-            http_response_code(ResponseCodes::HTTP_BAD_REQUEST);
-            echo json_encode(["message" => "Inconsistent Data Provided"]);
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Inconsistent Data Provided");
             return true;
         }
         return false;
@@ -83,8 +72,7 @@ class OrderController
     private function isOrderNotExist($content): bool
     {
         if ($this->orderRepository->getOne($content['id']) == null) {
-            http_response_code(ResponseCodes::HTTP_NOT_FOUND);
-            echo json_encode(["message" => "Order Not Found"]);
+            OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Order Not Found");
             return true;
         }
         return false;

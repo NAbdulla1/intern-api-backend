@@ -2,6 +2,7 @@
 
 use Controller\ImageController;
 use JSON_Web_Token\JWTController;
+use Utils\OtherResponse;
 use Utils\ResponseCodes;
 
 require "../../../vendor/autoload.php";
@@ -12,8 +13,7 @@ $access_token = isset(apache_request_headers()['access_token']) ? apache_request
 $user = JWTController::validateToken($access_token);
 if (!$user) exit();
 if (!$user->isAdmin()) {
-    http_response_code(ResponseCodes::HTTP_FORBIDDEN);
-    echo json_encode(["message" => "Only Admins are allowed to delete images"]);
+    OtherResponse::send(ResponseCodes::HTTP_FORBIDDEN, "Only Admins are allowed to delete images");
     exit();
 }
 

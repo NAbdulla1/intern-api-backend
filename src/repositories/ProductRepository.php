@@ -43,7 +43,7 @@ class ProductRepository
     public function delete($sku): bool
     {
         $stmt = $this->database->executePreparedStatement("DELETE FROM products WHERE sku = ?", "s", [$sku]);
-        return $stmt->affected_rows > 0;
+        return $stmt && $stmt->affected_rows > 0;
     }
 
     public function create(Product $product): bool
