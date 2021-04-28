@@ -39,7 +39,7 @@ class ProductController
         if ($this->productRepository->getOne($sku) == null)OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Product Not Found");
         $status = $this->productRepository->delete($sku);
         if ($status) OtherResponse::send(ResponseCodes::HTTP_NO_CONTENT, "successfully deleted");
-        else OtherResponse::send(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR, "Delete Failed");
+        else OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Delete Failed! There are orders associated to this product");
     }
 
     public function create($prodAssocArray)
