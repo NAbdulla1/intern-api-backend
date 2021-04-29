@@ -6,6 +6,7 @@ namespace Repository;
 
 use Database\DB;
 use Models\Product;
+use mysql_xdevapi\Result;
 use Utils\QueryBuilder;
 
 class ProductRepository
@@ -100,5 +101,15 @@ class ProductRepository
                 $types .= ($key == "price") ? "d" : "s";
         $types .= "s";
         return $types;
+    }
+
+    public function getDistinctProductCategories($pattern): array
+    {
+        $result = DB::instance()->executePreparedStatement("SELECT DISTINCT category FROM products WHERE category LIKE ?", 's', ["%" . $pattern . "%"]);
+        $categories = [];
+        if (!$result) return $categories;
+        $result = $result->get_result();
+        while ($cat = $result->fetch_assoc()) array_push($categories, [$cat['category']]);
+        return $categories;
     }
 }

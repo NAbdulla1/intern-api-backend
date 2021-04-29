@@ -36,7 +36,7 @@ class ProductController
     public function delete($sku)
     {
         if ($this->isSkuNull($sku)) return;
-        if ($this->productRepository->getOne($sku) == null)OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Product Not Found");
+        if ($this->productRepository->getOne($sku) == null) OtherResponse::send(ResponseCodes::HTTP_NOT_FOUND, "Product Not Found");
         $status = $this->productRepository->delete($sku);
         if ($status) OtherResponse::send(ResponseCodes::HTTP_NO_CONTENT, "successfully deleted");
         else OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Delete Failed! There are orders associated to this product");
@@ -50,7 +50,7 @@ class ProductController
                 http_response_code(ResponseCodes::HTTP_CREATED);
                 echo json_encode($prodAssocArray);
             } else
-                OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST,"Product already exists");
+                OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Product already exists");
         } catch (Exception $ex) {
             OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, $prodAssocArray == null ? "No Data" : $ex->getMessage());
         }
@@ -89,5 +89,10 @@ class ProductController
             return true;
         }
         return false;
+    }
+
+    public function getAvailableCategories($pattern)
+    {
+        echo json_encode($this->productRepository->getDistinctProductCategories($pattern));
     }
 }
