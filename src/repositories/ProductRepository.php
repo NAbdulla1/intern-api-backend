@@ -105,7 +105,7 @@ class ProductRepository
 
     public function getDistinctProductCategories($pattern): array
     {
-        $result = DB::instance()->executePreparedStatement("SELECT DISTINCT category FROM products WHERE category LIKE ?", 's', ["%" . $pattern . "%"]);
+        $result = DB::instance()->executePreparedStatement("SELECT DISTINCT category FROM products WHERE category LIKE ?", 's', ($pattern === "*" ? ["%"] : ["%" . $pattern . "%"]));
         $categories = [];
         if (!$result) return $categories;
         $result = $result->get_result();
