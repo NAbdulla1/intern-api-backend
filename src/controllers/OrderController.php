@@ -22,9 +22,13 @@ class OrderController
         $this->productRepository = new ProductRepository();
     }
 
-    public function getAll($user_email, string $page)
+    public function getAll($user_email, string $page, string $pageSize)
     {
-        list($ordersAsAssocArray, $ordersCount) = $this->orderRepository->get($user_email, $page);
+        if (empty($page) || empty($pageSize) || ((int)$page) <= 0 || ((int)$pageSize) <= 0) {
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "page and page_size parameters has invalid parameters");
+            return;
+        }
+        list($ordersAsAssocArray, $ordersCount) = $this->orderRepository->get($user_email, $page, $pageSize);
         echo json_encode(["orders" => $ordersAsAssocArray, 'count' => $ordersCount]);
     }
 

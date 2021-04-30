@@ -12,7 +12,7 @@ class OrderRepository
 {
     private DB $database;
     private array $statuses;
-    private int $pageSize = 10;
+    private int $pageSize = 3;
 
     public function __construct()
     {
@@ -20,8 +20,9 @@ class OrderRepository
         $this->statuses = (new OrderStatusRepository())->getAllStatus();
     }
 
-    public function get($user_email, string $page): array
+    public function get($user_email, string $page, string $pageSize): array
     {
+        $this->pageSize = empty($pageSize) ? $this->pageSize : (int)$pageSize;
         $orders = [];
         list($rows, $stmt) = $this->buildAndQuery($page, $user_email);
         if (!$stmt) return [$orders, $rows];
