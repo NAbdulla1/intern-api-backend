@@ -6,7 +6,6 @@ namespace Repository;
 
 use Database\DB;
 use Models\Product;
-use mysql_xdevapi\Result;
 use Utils\QueryBuilder;
 
 class ProductRepository

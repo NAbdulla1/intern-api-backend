@@ -65,4 +65,10 @@ class OrderRepository
         for ($i = 1; $i <= 3; $i++) if (strcasecmp($this->statuses[$i], $status) == 0) return $i;
         throw new InvalidArgumentException("unknown order status");
     }
+
+    public function delete($order_id): bool
+    {
+        $stmt = $this->database->executePreparedStatement("DELETE FROM orders WHERE id=?", "i", [(int)$order_id]);
+        return $stmt && $stmt->affected_rows == 1;
+    }
 }

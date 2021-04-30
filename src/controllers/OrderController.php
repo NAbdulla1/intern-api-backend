@@ -77,4 +77,15 @@ class OrderController
         }
         return false;
     }
+
+    public function delete($content)
+    {
+        if ($content == null || empty($content['id'])) {
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "Provide an id to delete the order");
+            return;
+        }
+        if ($this->isOrderNotExist($content)) return;
+        if ($this->orderRepository->delete($content['id'])) OtherResponse::send(ResponseCodes::HTTP_NO_CONTENT, 'Order Deleted Successfully');
+        else OtherResponse::send(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR, "Can't delete order");
+    }
 }
