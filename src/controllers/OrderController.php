@@ -22,10 +22,10 @@ class OrderController
         $this->productRepository = new ProductRepository();
     }
 
-    public function getAll($user_email)
+    public function getAll($user_email, string $page)
     {
-        $ordersAsAssocArray = $this->orderRepository->get($user_email);
-        echo json_encode(["orders" => $ordersAsAssocArray]);
+        list($ordersAsAssocArray, $ordersCount) = $this->orderRepository->get($user_email, $page);
+        echo json_encode(["orders" => $ordersAsAssocArray, 'count' => $ordersCount]);
     }
 
     public function create($orderAssocArray)

@@ -12,6 +12,7 @@ class OrderRepository
 {
     private DB $database;
     private array $statuses;
+    private int $pageSize = 10;
 
     public function __construct()
     {
@@ -19,15 +20,15 @@ class OrderRepository
         $this->statuses = (new OrderStatusRepository())->getAllStatus();
     }
 
-    public function get($user_email): array
+    public function get($user_email, string $page): array
     {
         $orders = [];
-        $query = "SELECT * FROM orders";
-        if ($user_email) $query .= " WHERE user_email = '$user_email'";
-        $result_set = $this->database->getConnection()->query($query);
+        list($rows, $stmt) = $this->buildAndQuery($page, $user_email);
+        if (!$stmt) return [$orders, $rows];
+        $result_set = $stmt->get_result();
         while ($result_set && $order = $result_set->fetch_assoc())
             array_push($orders, Order::fromAssocArray($order)->toAssocArray());
-        return $orders;
+        return [$orders, $rows === null ? count($orders) : $rows];
     }
 
     /**
@@ -70,5 +71,17 @@ class OrderRepository
     {
         $stmt = $this->database->executePreparedStatement("DELETE FROM orders WHERE id=?", "i", [(int)$order_id]);
         return $stmt && $stmt->affected_rows == 1;
+    }
+
+    public function buildAndQuery(string $page, $user_email): array
+    {
+        $query = "SELECT * FROM orders";
+        $res = $this->database->getConnection()->query($query . (empty($user_email) ? "" : " WHERE user_email = '$user_email'"));//using user email directly because we are not inputting it from user. we are setting correct user email, so no sql-injection
+        $rows = $res ? $res->num_rows : null;
+
+        $offset = max(0, $page - 1) * $this->pageSize;
+        $query .= " LIMIT ? OFFSET ?";
+        $stmt = $this->database->executePreparedStatement($query, "ii", [$this->pageSize, $offset]);
+        return array($rows, $stmt);
     }
 }
