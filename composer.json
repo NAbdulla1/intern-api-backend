@@ -22,7 +22,8 @@
       "Controller\\": "src/controllers",
       "Database\\": "src/db",
       "Utils\\": "src/utils",
-      "JSON_Web_Token\\": "src/jwt"
+      "JSON_Web_Token\\": "src/jwt",
+      "MyLogger\\": "src/my_logger"
     }
   }
 }
