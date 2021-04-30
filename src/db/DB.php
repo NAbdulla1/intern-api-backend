@@ -3,6 +3,7 @@
 
 namespace Database;
 
+use MyLogger\Log;
 use mysqli;
 use mysqli_stmt;
 
@@ -47,8 +48,14 @@ class DB
     {
         assert(strlen($types) > 0 && strlen($types) == count($values) && strlen($types) == substr_count($paramQuery, "?"));
         $stmt = DB::getConnection()->prepare($paramQuery);
-        if (!$stmt || !$stmt->bind_param($types, ...$values)) return false;
-        if (!$stmt->execute()) return false;
+        if (!$stmt || !$stmt->bind_param($types, ...$values)) {
+            Log::dbg(DB::instance()->getConnection()->error);
+            return false;
+        }
+        if (!$stmt->execute()) {
+            Log::dbg(DB::instance()->getConnection()->error);
+            return false;
+        }
         return $stmt;
     }
 }
