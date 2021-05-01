@@ -7,6 +7,7 @@ namespace Repository;
 use Database\DB;
 use InvalidArgumentException;
 use Models\Order;
+use MyLogger\Log;
 
 class OrderRepository
 {
@@ -81,7 +82,7 @@ class OrderRepository
         $rows = $res ? $res->num_rows : null;
 
         $offset = max(0, $page - 1) * $this->pageSize;
-        $query .= " LIMIT ? OFFSET ?";
+        $query .= (empty($user_email) ? "" : " WHERE user_email = '$user_email'") . " LIMIT ? OFFSET ?";
         $stmt = $this->database->executePreparedStatement($query, "ii", [$this->pageSize, $offset]);
         return array($rows, $stmt);
     }
