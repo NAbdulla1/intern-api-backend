@@ -6,6 +6,7 @@ namespace Repository;
 
 use Database\DB;
 use Models\Product;
+use MyLogger\Log;
 use Utils\QueryBuilder;
 
 class ProductRepository
@@ -19,13 +20,14 @@ class ProductRepository
 
     public function get($parameters): array
     {
+        $productCount = $this->getProductCountBeforePaging($parameters);
         $products = [];
         [$query, $types, $bindParams] = (new QueryBuilder("products", true, $parameters))->buildQuery();
         $stmt = $this->database->executePreparedStatement($query, $types, $bindParams);
         if ($stmt && ($result_set = $stmt->get_result()))
             while ($result_set && $prod = $result_set->fetch_assoc())
                 array_push($products, Product::fromAssocArray($prod)->toAssocArray());
-        return $products;
+        return [$products, $productCount];
     }
 
     public function getOne($sku): ?array
@@ -110,5 +112,15 @@ class ProductRepository
         $result = $result->get_result();
         while ($cat = $result->fetch_assoc()) array_push($categories, [$cat['category']]);
         return $categories;
+    }
+
+    private function getProductCountBeforePaging($parameters): int
+    {
+        [$query, $types, $bindParams] = (new QueryBuilder("products", false, $parameters))->buildQuery();
+        if (strlen($types) == 0)
+            return (($result_set = $this->database->getConnection()->query("SELECT * FROM products")) ? $result_set->num_rows : 0);
+        $stmt = $this->database->executePreparedStatement($query, $types, $bindParams);
+        if ($stmt) return $stmt->get_result()->num_rows;
+        return 0;
     }
 }

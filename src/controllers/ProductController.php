@@ -6,6 +6,7 @@ require "../../vendor/autoload.php";
 
 use Exception;
 use Models\Product;
+use MyLogger\Log;
 use Repository\ProductRepository;
 use Utils\OtherResponse;
 use Utils\ResponseCodes;
@@ -21,8 +22,8 @@ class ProductController
 
     public function getAll($parameters)
     {
-        $productsAsAssocArray = $this->productRepository->get($parameters);
-        echo json_encode(["products" => $productsAsAssocArray]);
+        [$productsAsAssocArray, $productCount] = $this->productRepository->get($parameters);
+        echo json_encode(["products" => $productsAsAssocArray, "count" => $productCount]);
     }
 
     public function getOne($sku)
