@@ -55,4 +55,14 @@ class UserController
     {
         return password_hash($password, PASSWORD_BCRYPT);
     }
+
+    public function getAll(string $page, string $pageSize)
+    {
+        if (empty($page) || empty($pageSize) || ((int)$page) <= 0 || ((int)$pageSize) <= 0) {
+            OtherResponse::send(ResponseCodes::HTTP_BAD_REQUEST, "page and page_size parameters has invalid parameters");
+            return;
+        }
+        list($usersAsAssocArray, $usersCount) = $this->userRepository->get((int)$page, (int)$pageSize);
+        echo json_encode(["users" => $usersAsAssocArray, 'count' => $usersCount]);
+    }
 }
