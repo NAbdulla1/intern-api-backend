@@ -6,4 +6,4 @@ A documentation of the api endpoints is published [here](https://documenter.getp
 I am using MariaDB as the database.
 
 ER Diagram
-![ER Diagram](https://github.com/NAbdulla1/intern-api-backend/blob/main/Database%20ER%20Diagram.svg?raw=true)
+[ER Diagram](https://github.com/NAbdulla1/intern-api-backend/blob/main/Database%20ER%20Diagram.svg?raw=true)
