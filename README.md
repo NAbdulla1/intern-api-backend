@@ -3,4 +3,7 @@ This is a simple product order system's api backend. It is done using *raw PHP w
 A documentation of the api endpoints is published [here](https://documenter.getpostman.com/view/15523619/TzJyaaJt).
 
 # database
-I am using MariaDB as the database. 
+I am using MariaDB as the database.
+
+ER Diagram
+![ER Diagram](https://github.com/NAbdulla1/intern-api-backend/blob/main/Database%20ER%20Diagram.svg?raw=true)
